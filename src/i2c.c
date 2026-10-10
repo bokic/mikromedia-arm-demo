@@ -16,10 +16,13 @@ void I2C_Init(void)
 	I2C0SCLL = 0x4B;
 }
 
+#define I2C_TIMEOUT 100000
+
 bool I2C_Read(char address, unsigned char *data, uint8_t num)
 {
 	uint8_t c = 0;
-	volatile uint8_t dummy;
+	__attribute__((unused)) volatile uint8_t dummy;
+	uint32_t timeout;
 
 	// I2C interrupt Clear bit.
 	I2C0CONCLR = 0x08;
@@ -27,23 +30,38 @@ bool I2C_Read(char address, unsigned char *data, uint8_t num)
 	// Start i2c
 	I2C0CONSET |= 0x20;
 
-	while((I2C0CONCLR & 0x08) == 0);
-	while(I2C0STAT != 0x08);
+	timeout = I2C_TIMEOUT;
+	while(((I2C0CONSET & 0x08) == 0) && --timeout);
+	if (!timeout) return false;
+
+	timeout = I2C_TIMEOUT;
+	while((I2C0STAT != 0x08) && --timeout);
+	if (!timeout) return false;
 	I2C0CONCLR = 0x08; // I2C interrupt Clear bit.
 
 	I2C0CONCLR = 0x20;
 	I2C0DAT = address | 0x01;
 
-	while((I2C0CONCLR & 0x08) == 0);
-	while(I2C0STAT != 0x40);
+	timeout = I2C_TIMEOUT;
+	while(((I2C0CONSET & 0x08) == 0) && --timeout);
+	if (!timeout) return false;
+
+	timeout = I2C_TIMEOUT;
+	while((I2C0STAT != 0x40) && --timeout);
+	if (!timeout) return false;
 	I2C0CONCLR = 0x08; // I2C interrupt Clear bit.
 
 	for(c = 0; c < num; c++)
 	{
 		I2C0CONSET = 0x04;
 
-		while((I2C0CONCLR & 0x08) == 0);
-		while(I2C0STAT != 0x50);
+		timeout = I2C_TIMEOUT;
+		while(((I2C0CONSET & 0x08) == 0) && --timeout);
+		if (!timeout) return false;
+
+		timeout = I2C_TIMEOUT;
+		while((I2C0STAT != 0x50) && --timeout);
+		if (!timeout) return false;
 		I2C0CONCLR = 0x08; // I2C interrupt Clear bit.
 
 		data[c] = I2C0DAT;
@@ -51,8 +69,13 @@ bool I2C_Read(char address, unsigned char *data, uint8_t num)
 
 	I2C0CONCLR = 0x04;
 
-	while((I2C0CONCLR & 0x08) == 0);
-	while(I2C0STAT != 0x58);
+	timeout = I2C_TIMEOUT;
+	while(((I2C0CONSET & 0x08) == 0) && --timeout);
+	if (!timeout) return false;
+
+	timeout = I2C_TIMEOUT;
+	while((I2C0STAT != 0x58) && --timeout);
+	if (!timeout) return false;
 
 	dummy = I2C0DAT;
 	I2C0CONSET = 0x10;
@@ -63,6 +86,7 @@ bool I2C_Read(char address, unsigned char *data, uint8_t num)
 bool I2C_Send(char address, unsigned char *data, uint8_t num)
 {
 	uint8_t c = 0;
+	uint32_t timeout;
 
 	// I2C interrupt Clear bit.
 	I2C0CONCLR = 0x08;
@@ -70,23 +94,38 @@ bool I2C_Send(char address, unsigned char *data, uint8_t num)
 	// Start i2c
 	I2C0CONSET |= 0x20;
 
-	while((I2C0CONCLR & 0x08) == 0);
-	while(I2C0STAT != 0x08);
+	timeout = I2C_TIMEOUT;
+	while(((I2C0CONSET & 0x08) == 0) && --timeout);
+	if (!timeout) return false;
+
+	timeout = I2C_TIMEOUT;
+	while((I2C0STAT != 0x08) && --timeout);
+	if (!timeout) return false;
 	I2C0CONCLR = 0x08; // I2C interrupt Clear bit.
 
 	I2C0CONCLR = 0x20;
 	I2C0DAT = address & 0xFE;
 
-	while((I2C0CONCLR & 0x08) == 0);
-	while(I2C0STAT != 0x18);
+	timeout = I2C_TIMEOUT;
+	while(((I2C0CONSET & 0x08) == 0) && --timeout);
+	if (!timeout) return false;
+
+	timeout = I2C_TIMEOUT;
+	while((I2C0STAT != 0x18) && --timeout);
+	if (!timeout) return false;
 	I2C0CONCLR = 0x08; // I2C interrupt Clear bit.
 
 	for(c = 0; c < num; c++)
 	{
 		I2C0DAT = data[c];
 
-		while((I2C0CONCLR & 0x08) == 0);
-		while(I2C0STAT != 0x28);
+		timeout = I2C_TIMEOUT;
+		while(((I2C0CONSET & 0x08) == 0) && --timeout);
+		if (!timeout) return false;
+
+		timeout = I2C_TIMEOUT;
+		while((I2C0STAT != 0x28) && --timeout);
+		if (!timeout) return false;
 		I2C0CONCLR = 0x08; // I2C interrupt Clear bit.
 	}
 

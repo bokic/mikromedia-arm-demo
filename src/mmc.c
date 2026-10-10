@@ -165,10 +165,16 @@ unsigned char Mmc_Init(volatile unsigned long *port, unsigned char cspin)
 		return 0;
 	}
 	
-	do // TODO: Limit number of retries.
+	int retries = 50000;
+	do
 	{
 		tmp = Mmc_Send_Command(SD_CMD1_SEND_OPCOND, 0, 0xFF);
-	} while (tmp != 0);
+	} while ((tmp != 0) && --retries);
+	
+	if (tmp != 0)
+	{
+		return 0;
+	}
 	
 	mmc_initialized = true;
 	
@@ -179,6 +185,7 @@ unsigned char Mmc_Read_Sector(unsigned long sector, unsigned char *dbuff)
 {
 	unsigned char tmp;
 	int c;
+	int retries;
 		
 	if(mmc_initialized == false)
 	{
@@ -202,10 +209,19 @@ unsigned char Mmc_Read_Sector(unsigned long sector, unsigned char *dbuff)
 		return 1;
 	}
 	
-	do // TODO: Limit number of retries.
+	retries = 50000;
+	do
 	{
 		tmp = SPI_char(0xFF);
-	} while(tmp != 0xFE);
+	} while((tmp != 0xFE) && --retries);
+	
+	if (tmp != 0xFE)
+	{
+		SPI_char(0xFF);
+		DisableCS();
+		SPI_char(0xFF);
+		return 1;
+	}
 	
 	for(c = 0; c < 512; c++)
 	{
@@ -227,6 +243,7 @@ unsigned char Mmc_Write_Sector(unsigned long sector, unsigned char *dbuff)
 {
 	unsigned char tmp;
 	int c;
+	int retries;
 
 	if(mmc_initialized == false)
 	{
@@ -271,16 +288,17 @@ unsigned char Mmc_Write_Sector(unsigned long sector, unsigned char *dbuff)
 		return 2;
 	}
 	
-	do // TODO: Limit number of retries.
+	retries = 50000;
+	do
 	{
 		tmp = SPI_char(0xFF);
-	} while(tmp != 0xFF);
+	} while((tmp != 0xFF) && --retries);
 
 	SPI_char(0xFF);
 	DisableCS();
 	SPI_char(0xFF);
 	
-	return 0;
+	return (tmp == 0xFF) ? 0 : 3;
 }
 
 unsigned char Mmc_Read_Cid(unsigned char *data_cid)

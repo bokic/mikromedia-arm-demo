@@ -31,6 +31,8 @@ void touch_init(void)
 
 void touch_getraw(unsigned short *x, unsigned short *y)
 {	
+	uint32_t timeout;
+
 	// Get X
 	IO0CLR = YU; // clears YU
 	IO0SET = YD; // sets YD
@@ -38,8 +40,9 @@ void touch_getraw(unsigned short *x, unsigned short *y)
 	PINSEL1 = (PINSEL1 & 0xFFF3FFFF) | 0x00040000; // Set P0.25 as (AD0.4) 
 	DelayUS(400);
 	AD0CR = 0x01200D10; // Starts ADC conversion.
-	while((AD0GDR & 0x80000000) == 0); // Wait til conversion finishes.
-	*x = (AD0DR4 >> 6) & 0x3FF;
+	timeout = 100000;
+	while(((AD0GDR & 0x80000000) == 0) && --timeout); // Wait til conversion finishes.
+	*x = (timeout > 0) ? ((AD0DR4 >> 6) & 0x3FF) : 0;
 	PINSEL1 = (PINSEL1 & 0xFFF3FFFF); // Set P0.25 as GPIO
 	IO0CLR  = XL|YU|XR|YD;
 	IO0DIR |= XL|YU|XR|YD; // Set YU and YD pin as output
@@ -51,8 +54,9 @@ void touch_getraw(unsigned short *x, unsigned short *y)
 	PINSEL1 = (PINSEL1 & 0xCFFFFFFF) | 0x10000000; // // Set P0.30 as (AD0.3)  
 	DelayUS(400);
 	AD0CR = 0x01200D08; // Starts ADC conversion.
-	while((AD0GDR & 0x80000000) == 0); // Wait til conversion finishes.
-	*y = (AD0DR3 >> 6) & 0x3FF;	
+	timeout = 100000;
+	while(((AD0GDR & 0x80000000) == 0) && --timeout); // Wait til conversion finishes.
+	*y = (timeout > 0) ? ((AD0DR3 >> 6) & 0x3FF) : 0;
 	PINSEL1 = (PINSEL1 & 0xCFFFFFFF); // Set P0.30 as GPIO
 	IO0CLR  = XL|YU|XR|YD;
 	IO0DIR |= XL|YU|XR|YD; // Set YU and YD pin as output
@@ -82,7 +86,7 @@ bool touch_get(unsigned short *x, unsigned short *y)
 	tmpx -= minx;
 	tmpy -= miny;
 	
-	if ((maxx == 0)||(maxy == 0))
+	if ((maxx <= minx) || (maxy <= miny))
 	{
 		*x = 0;	
 		*y = 0;
@@ -90,7 +94,7 @@ bool touch_get(unsigned short *x, unsigned short *y)
 	else
 	{
 		*x = (tmpx * 320) / (maxx - minx);	
-		*y = (tmpy * 240) / (maxy - minx);
+		*y = (tmpy * 240) / (maxy - miny);
 		
 		if (*x >= 320) *x = 319;
 		if (*y >= 240) *y = 239;

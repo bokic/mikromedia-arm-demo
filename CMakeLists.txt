@@ -8,8 +8,8 @@ endif()
 
 project(mikromedia-demo C ASM)
 
-# Ensure C standard is GNU89 (appropriate for legacy LPC2148 / FAT code)
-set(CMAKE_C_STANDARD 90)
+# Ensure C standard is C11
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS ON)
 
 # Default build type

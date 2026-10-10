@@ -119,16 +119,13 @@ int main (void)
     Accel_Init();
 
 
-    short x, y, z;
-    int tmp1 = 0;
+    __attribute__((unused)) short x, y, z;
 
     while(1)
     {
         x = Accel_ReadX();
         y = Accel_ReadY();
         z = Accel_ReadZ();
-
-        tmp1++;
     }
 
     while(1);
@@ -161,12 +158,3 @@ void UNDEF_Routine (void)
 {
 	while (1);
 }
-
-
-
-
-
-
-
-
-

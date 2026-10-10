@@ -6,7 +6,7 @@ static int initialized = 0;
 
 int sd_read(uint32 sector, uint8 *buffer, uint32 sector_count)
 {
-	int c = 0;
+	uint32 c = 0;
 
 	for(c = 0; c < sector_count; c++)
 	{
@@ -21,7 +21,7 @@ int sd_read(uint32 sector, uint8 *buffer, uint32 sector_count)
 
 int sd_write(uint32 sector, uint8 *buffer, uint32 sector_count)
 {
-	int c = 0;
+	uint32 c = 0;
 
 	for(c = 0; c < sector_count; c++)
 	{
@@ -46,7 +46,7 @@ fs_init(void) {
 
 	// Attach media access functions to library
 	if (fl_attach_media(sd_read, sd_write) != FAT_INIT_OK) {
-		return (-1); 
+		return (-1);
 	}
 
 	initialized = 1;
@@ -60,7 +60,7 @@ fs_fini(void) {
 
 	fl_shutdown();
 
-	sd_fini();
+	//sd_fini();
 
 	initialized = 0;
 

@@ -6,7 +6,11 @@
 #endif
 
 #ifndef FAT_INLINE
-    #define FAT_INLINE
+    #if defined(__GNUC__) || defined(__clang__)
+        #define FAT_INLINE inline __attribute__((unused))
+    #else
+        #define FAT_INLINE inline
+    #endif
 #endif
 
 //-----------------------------------------------------------------

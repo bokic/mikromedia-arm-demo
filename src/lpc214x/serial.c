@@ -73,10 +73,10 @@ static unsigned char DECnum[256];
 void UART0_init (unsigned long bps, unsigned long VPBclk, unsigned char len, unsigned char stop, unsigned char parity, unsigned char parity_sel)
 {
 	unsigned long temp = 0;
-	unsigned int lcr = 0;
-	
+	__attribute__((unused)) volatile unsigned int lcr = 0;
+
 	temp = (VPBclk / bps) >> 4;
-	
+
 	switch(len)
 	{
 	case length_5_bit:
@@ -95,7 +95,7 @@ void UART0_init (unsigned long bps, unsigned long VPBclk, unsigned char len, uns
 		while(1) {}
 		break;
 	}
-	
+
 	switch(stop)
 	{
 	case stop_bit_1:
@@ -108,7 +108,7 @@ void UART0_init (unsigned long bps, unsigned long VPBclk, unsigned char len, uns
 		while(1) {}
 		break;
 	}
-	
+
 	switch(parity)
 	{
 	case parity_disable:
@@ -120,7 +120,7 @@ void UART0_init (unsigned long bps, unsigned long VPBclk, unsigned char len, uns
 		while(1) {}
 		break;
 	}
-	
+
 	switch(parity_sel)
 	{
 	case parity_odd:
@@ -148,9 +148,9 @@ void UART0_init (unsigned long bps, unsigned long VPBclk, unsigned char len, uns
 
 	U0FCR = UART_FCR_FIFO_EN | UART_FCR_RX_FIFO_RES | UART_FCR_TX_FIFO_RES;
 	U0LCR = 0;
-	
+
 	U0TER = UART_TER_TXEN;
-	
+
 	PINSEL0 = (PINSEL0 & 0xFFFFFFF0) | 0x00000005; // Set P0.0 as TXD (UART0), and P0.1 as RxD (UART0)
 }
 
@@ -184,8 +184,8 @@ void UART0_WriteNum(unsigned char *p, signed long n)
 	{
 		UART0_sendstring(p);
 	}
-	
-	hex2str(DECnum, n, 2);	
+
+	hex2str(DECnum, n, 2);
 	UART0_sendstring(DECnum);
 }
 
@@ -201,10 +201,10 @@ void UART0_WriteLnNum(unsigned char *p, signed long n)
 void UART1_init(unsigned int bps, unsigned int VPBclk, unsigned char len, unsigned char stop, unsigned char parity, unsigned char parity_sel)
 {
 	unsigned long temp = 0;
-	unsigned int lcr = 0;
-	
+	__attribute__((unused)) volatile unsigned int lcr = 0;
+
 	temp = (VPBclk / bps) >> 4;
-	
+
 	switch(len)
 	{
 	case length_5_bit:
@@ -223,7 +223,7 @@ void UART1_init(unsigned int bps, unsigned int VPBclk, unsigned char len, unsign
 		while(1) {}
 		break;
 	}
-	
+
 	switch(stop)
 	{
 	case stop_bit_1:
@@ -236,7 +236,7 @@ void UART1_init(unsigned int bps, unsigned int VPBclk, unsigned char len, unsign
 		while(1) {}
 		break;
 	}
-	
+
 	switch(parity)
 	{
 	case parity_disable:
@@ -248,7 +248,7 @@ void UART1_init(unsigned int bps, unsigned int VPBclk, unsigned char len, unsign
 		while(1) {}
 		break;
 	}
-	
+
 	switch(parity_sel)
 	{
 	case parity_odd:
@@ -279,7 +279,7 @@ void UART1_init(unsigned int bps, unsigned int VPBclk, unsigned char len, unsign
 	U1MCR = 0;
 
 	U1TER = UART_TER_TXEN;
-	
+
 	PINSEL0 = (PINSEL0 & 0xFFF0FFFF) | 0x00050000; // Set P0.8 as TXD (UART1), and P0.9 as RxD (UART1)
 }
 
@@ -313,7 +313,7 @@ void UART1_WriteNum(unsigned char *p, signed long n)
 	{
 		UART1_sendstring(p);
 	}
-	
+
 	hex2str(DECnum, n, 2);
 	UART1_sendstring(DECnum);
 }
@@ -325,4 +325,3 @@ void UART1_WriteLnNum(unsigned char *p, signed long n)
 	UART1_sendchar('\r');
 	UART1_sendchar('\n');
 }
-

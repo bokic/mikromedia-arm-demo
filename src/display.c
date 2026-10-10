@@ -47,14 +47,14 @@ static unsigned short row_data[320];
 //static unsigned char PenWidth = 1;
 
 
-__inline void TFT_Set8BitData(uint8_t data)
+static inline void TFT_Set8BitData(uint8_t data)
 {
 	SET_D0_D7(data << 15);
 	data = ~data;
 	CLEAR_D0_D7(data << 15);
 }
 
-__inline void TFT_Set16BitData(uint16_t data)
+static inline void TFT_Set16BitData(uint16_t data)
 {
 	uint8_t low, high;
 	
@@ -69,7 +69,7 @@ __inline void TFT_Set16BitData(uint16_t data)
 	CLEAR_D8_D15(high << 16);
 }
 
-__inline unsigned char TFT_Get8BitData()
+static inline unsigned char TFT_Get8BitData()
 {
 	unsigned char ret = 0;
 	
@@ -86,7 +86,7 @@ __inline unsigned char TFT_Get8BitData()
 	return ret;
 }
 
-__inline unsigned short TFT_Get16BitData()
+static inline unsigned short TFT_Get16BitData()
 {
 	unsigned short ret = 0;
 	
@@ -111,13 +111,13 @@ __inline unsigned short TFT_Get16BitData()
 	return ret;
 }
 
-__inline void TFT_Write_Strobe(void)
+static inline void TFT_Write_Strobe(void)
 {
 	CLEAR_CTRLS(WRX);
 	SET_CTRLS(WRX);
 }
 
-__inline void TFT_Read_Strobe(void)
+static inline void TFT_Read_Strobe(void)
 {
 	CLEAR_CTRLS(RDX);
 	SET_CTRLS(RDX);
