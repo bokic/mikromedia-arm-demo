@@ -1,3 +1,6 @@
 Debug
 Release
+build/
+build-*/
+cmake-build-*/
 
