@@ -2,11 +2,15 @@
 
 Demonstration and board support package for the **mikromedia for ARM** development board by [MikroElektronika (MIKROE)](https://www.mikroe.com/).
 
+![mikromedia for ARM](docs/mikromedia-arm.jpg)
+
 ---
 
 ## Hardware Overview
 
 - **Board Name**: mikromedia for ARM (LPC2148)
+- **Product ID / PID**: MIKROE-780
+- **Product Reference**: [TME MIKROE-780 Catalog Entry](https://www.tme.eu/en/details/mikroe-780/other-development-tools/mikroelektronika/)
 - **Manufacturer**: MikroElektronika (MIKROE)
 - **Lifecycle Status**: **Discontinued / Legacy (End-of-Life)**. The legacy ARM7TDMI-S series has been superseded by newer ARM Cortex-M based mikromedia boards.
 - **Microcontroller**: NXP **LPC2148**
